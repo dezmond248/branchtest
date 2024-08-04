@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+
+<head lang="ja">
+<meta charset="utf-8" />
+<script src="/chart/chart.umd.js"></script>
+</head>
+
+<body>
+<div>
+	<canvas id="myChart"></canvas>
+</div>
+<hr>
+</body>
+
+<script>
+
+const ctx = document.getElementById('myChart');
+
+const plugin1 = {
+    id: 'custom_canvas_background_color',
+    beforeDraw: (chart, args, options) => {
+        const {ctx} = chart;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = options.color;
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+    },
+    defaults: {
+        color: 'lightGreen'
+    }
+}
+
+const plugin2 = {
+	id: 'box_at_right',
+	beforeDraw: (chart, args, options) => {
+		const {ctx} = chart;
+		ctx.save();
+
+		ctx.fillStyle = 'black';
+		ctx.font = "20px 'ＭＳ ゴシック'";
+		ctx.fillText('あtext', chart.width - 190, 70);
+		ctx.fillText('あtext', chart.width - 190, 90);
+
+		ctx.globalCompositeOperation = 'destination-over';
+		ctx.fillStyle = options.color;
+		ctx.fillRect(chart.width - 200, 50, 170, 200);
+
+		ctx.restore();
+	},
+	defaults: {
+		color: 'rgba(200, 200, 200, 1)'
+	}
+}
+
+Chart.register({
+	plugin2
+});
+
+/*
+Chart.register({
+	plugin2
+});
+*/
+
+	new Chart(ctx, {
+		type: 'line',
+		responsive: true,
+		data: {
+			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+			datasets: [{
+			label: 'てすと',
+			data: [12, 19, 3, 5, 2, 3],
+			borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+			y: {
+				beginAtZero: true
+			}
+			}
+		},
+/*
+		plugins: [{
+			afterRender: function(chart, options) {
+				console.log('yolo', chart);
+				console.log('ctx.width:', ctx.width, chart.width);
+			}
+		}],
+*/
+		plugins: {
+			custom_canvas_background_color: false,
+		},
+		plugins: {
+			box_at_right: true,
+		},
+	});
+</script>
